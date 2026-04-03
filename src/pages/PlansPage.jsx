@@ -88,6 +88,33 @@ export default function PlansPage() {
   }
 
   const handleSave = async () => {
+    // Validation
+    if (!form.isTrial && Number(form.price) <= 0) {
+      alert('Price must be greater than 0 for non-trial plans. Enable "Free Trial Plan" if this is a trial plan.')
+      setSaving(false)
+      return
+    }
+
+    const validateLimit = (value, fieldName) => {
+      const num = Number(value)
+      if (num < -1) {
+        return `${fieldName} cannot be less than -1. Use -1 for unlimited.`
+      }
+      return null
+    }
+
+    const limitErrors = [
+      validateLimit(form.maxCertificatesPerMonth, 'Max Certificates'),
+      validateLimit(form.maxContactViewsPerMonth, 'Max Contact Views'),
+      validateLimit(form.maxEmployees, 'Max Employees'),
+    ].filter(Boolean)
+
+    if (limitErrors.length > 0) {
+      alert(limitErrors.join('\n'))
+      setSaving(false)
+      return
+    }
+
     setSaving(true)
     try {
       const payload = {
