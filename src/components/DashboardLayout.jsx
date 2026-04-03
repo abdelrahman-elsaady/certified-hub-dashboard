@@ -15,6 +15,7 @@ import {
   FiBookOpen,
   FiFileText,
 } from 'react-icons/fi'
+import styles from './DashboardLayout.module.css'
 
 const navItems = [
   { to: '/', icon: FiHome, label: 'Overview', end: true },
@@ -72,22 +73,18 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
+    <div className={styles.layout}>
       {/* Sidebar overlay for mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+          className={styles.overlay}
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 start-0 z-30 w-64 bg-white border-e border-gray-200 transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto flex flex-col ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 shrink-0">
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <div className={styles.sidebarHeader}>
           <span className="text-xl font-bold text-primary">
             C<span className="text-primary-light">H</span>
             <span className="text-sm font-normal text-gray-500 ml-2">Admin</span>
@@ -100,7 +97,7 @@ export default function DashboardLayout() {
           </button>
         </div>
 
-        <nav className="p-4 space-y-1 overflow-y-auto flex-1">
+        <nav className={styles.sidebarNav}>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -108,11 +105,7 @@ export default function DashboardLayout() {
               end={item.end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary-50 text-primary'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
               }
             >
               <item.icon className="w-5 h-5" />
@@ -121,10 +114,10 @@ export default function DashboardLayout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-200 shrink-0">
+        <div className={styles.sidebarFooter}>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+            className={styles.logoutButton}
           >
             <FiLogOut className="w-5 h-5" />
             Logout
@@ -133,9 +126,9 @@ export default function DashboardLayout() {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={styles.mainContent}>
         {/* Top bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-6 shrink-0">
+        <header className={styles.topBar}>
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -153,7 +146,7 @@ export default function DashboardLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className={styles.pageContent}>
           <Outlet />
         </main>
       </div>
