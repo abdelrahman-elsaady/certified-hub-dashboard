@@ -12,6 +12,7 @@ import CoursesPage from './pages/CoursesPage'
 import CourseCategoriesPage from './pages/CourseCategoriesPage'
 import CoursePlansPage from './pages/CoursePlansPage'
 import AboutPage from './pages/AboutPage'
+import ContactMessagesPage from './pages/ContactMessagesPage'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="course-categories" element={<CourseCategoriesPage />} />
         <Route path="course-plans" element={<CoursePlansPage />} />
         <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactMessagesPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

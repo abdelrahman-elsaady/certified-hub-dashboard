@@ -14,6 +14,7 @@ import {
   FiTag,
   FiBookOpen,
   FiFileText,
+  FiMail,
 } from 'react-icons/fi'
 import styles from './DashboardLayout.module.css'
 
@@ -28,6 +29,7 @@ const navItems = [
   { to: '/course-plans', icon: FiPackage, label: 'Course Plans' },
   { to: '/plans', icon: FiPackage, label: 'Plans' },
   { to: '/subscriptions', icon: FiCreditCard, label: 'Subscriptions' },
+  { to: '/contact', icon: FiMail, label: 'Contact' },
   { to: '/about', icon: FiFileText, label: 'About Page' },
 ]
 

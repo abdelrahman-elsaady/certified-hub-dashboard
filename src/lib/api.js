@@ -52,6 +52,10 @@ export const adminAPI = {
   createCertificateType: (data) => api.post('/admin/certificate-types', data),
   updateCertificateType: (id, data) => api.put(`/admin/certificate-types/${id}`, data),
   deleteCertificateType: (id) => api.delete(`/admin/certificate-types/${id}`),
+  // Contact Messages
+  getContactMessages: (params) => api.get('/contact', { params }),
+  updateContactMessageStatus: (id, data) => api.put(`/contact/${id}/status`, data),
+  deleteContactMessage: (id) => api.delete(`/contact/${id}`),
 };
 
 // Plans (public — dashboard needs all plans including trials)
