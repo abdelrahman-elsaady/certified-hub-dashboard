@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../lib/api'
-import { FiCheck, FiX, FiChevronLeft, FiChevronRight, FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi'
+import { FiCheck, FiX, FiChevronLeft, FiChevronRight, FiTrash2 } from 'react-icons/fi'
 
 export default function CertificatesPage() {
   const [certificates, setCertificates] = useState([])
@@ -31,18 +31,7 @@ export default function CertificatesPage() {
     try {
       await adminAPI.verifyCertificate(id, { isVerified })
       setCertificates((prev) =>
-        prev.map((c) => (c._id === id ? { ...c, isVerified } : c))
-      )
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update certificate')
-    }
-  }
-
-  const handleToggleActive = async (id, isActive) => {
-    try {
-      await adminAPI.toggleCertificateActive(id, { isActive })
-      setCertificates((prev) =>
-        prev.map((c) => (c._id === id ? { ...c, isActive } : c))
+        prev.map((c) => (c._id === id ? { ...c, isVerified, status: isVerified ? 'verified' : 'rejected' } : c))
       )
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update certificate')
@@ -97,8 +86,7 @@ export default function CertificatesPage() {
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Type</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Expiry</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Photo</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Verified</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Active</th>
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
@@ -144,30 +132,20 @@ export default function CertificatesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${cert.isVerified ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}
+                        className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                          cert.status === 'verified' ? 'bg-green-50 text-green-700' :
+                          cert.status === 'rejected' ? 'bg-red-50 text-red-700' :
+                          'bg-amber-50 text-amber-700'
+                        }`}
                       >
-                        {cert.isVerified ? 'Verified' : 'Pending'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={'inline-flex px-2 py-0.5 rounded-full text-xs font-medium ' + (cert.isActive !== false ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700')}
-                      >
-                        {cert.isActive !== false ? 'Active' : 'Deactivated'}
+                        {cert.status === 'verified' ? 'Verified' : 
+                         cert.status === 'rejected' ? 'Rejected' : 'Pending'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-1">
-                        {/* Active/Deactivate */}
-                        <button
-                          onClick={() => handleToggleActive(cert._id, cert.isActive === false)}
-                          className={'p-1.5 rounded-lg transition-colors ' + (cert.isActive !== false ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100')}
-                          title={cert.isActive !== false ? 'Deactivate' : 'Activate'}
-                        >
-                          {cert.isActive !== false ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
-                        </button>
                         {/* Verify/Reject */}
-                        {!cert.isVerified && (
+                        {cert.status !== 'verified' && (
                           <button
                             onClick={() => handleVerify(cert._id, true)}
                             className="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
@@ -176,11 +154,11 @@ export default function CertificatesPage() {
                             <FiCheck className="w-4 h-4" />
                           </button>
                         )}
-                        {cert.isVerified && (
+                        {cert.status === 'verified' && (
                           <button
                             onClick={() => handleVerify(cert._id, false)}
                             className="p-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
-                            title="Unverify"
+                            title="Reject"
                           >
                             <FiX className="w-4 h-4" />
                           </button>

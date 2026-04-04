@@ -13,8 +13,9 @@ export default function ContactMessagesPage() {
   const fetchMessages = async () => {
     setLoading(true)
     try {
-      const statusFilter = filter === 'all' ? '' : filter
-      const res = await adminAPI.getContactMessages(`?page=${page}&limit=10${statusFilter ? `&status=${statusFilter}` : ''}`)
+      const params = { page, limit: 10 }
+      if (filter !== 'all') params.status = filter
+      const res = await adminAPI.getContactMessages(params)
       setMessages(res.data.data || [])
       setPagination(res.data.pagination || { page: 1, pages: 1, total: 0 })
     } catch (err) {
