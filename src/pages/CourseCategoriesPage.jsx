@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { courseCategoriesAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 
 const emptyForm = { name: { en: '', ar: '' }, order: 0, isActive: true }
 
@@ -11,6 +12,7 @@ export default function CourseCategoriesPage() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const navigate = useNavigate()
 
   const fetchCategories = async () => {
     setLoading(true)
@@ -74,13 +76,22 @@ export default function CourseCategoriesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Course Categories</h1>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-        >
-          <FiPlus className="w-4 h-4" />
-          Add Category
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigate('/courses')}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            Manage Courses
+          </button>
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            Add Category
+          </button>
+        </div>
       </div>
 
       {loading ? (

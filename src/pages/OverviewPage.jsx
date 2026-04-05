@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../lib/api'
-import { FiUsers, FiBriefcase, FiAward, FiCreditCard, FiUserCheck, FiEye, FiClock, FiDollarSign } from 'react-icons/fi'
+import { FiUsers, FiBriefcase, FiAward, FiCreditCard, FiUserCheck, FiClock, FiDollarSign } from 'react-icons/fi'
 import {
   BarChart,
   Bar,
@@ -46,6 +46,13 @@ export default function OverviewPage() {
       bg: 'bg-blue-50',
     },
     {
+      label: 'Individual Users',
+      value: stats?.individualUsers || 0,
+      icon: FiUsers,
+      color: 'text-cyan-600',
+      bg: 'bg-cyan-50',
+    },
+    {
       label: 'Companies',
       value: stats?.totalCompanies || 0,
       icon: FiBriefcase,
@@ -86,13 +93,6 @@ export default function OverviewPage() {
       icon: FiUserCheck,
       color: 'text-indigo-600',
       bg: 'bg-indigo-50',
-    },
-    {
-      label: 'Contact Views',
-      value: stats?.totalContactViews || 0,
-      icon: FiEye,
-      color: 'text-rose-600',
-      bg: 'bg-rose-50',
     },
   ]
 

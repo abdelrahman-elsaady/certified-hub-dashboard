@@ -6,6 +6,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [userType, setUserType] = useState('all') // 'all', 'individual', 'company'
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 })
   const [expandedUser, setExpandedUser] = useState(null)
 
@@ -14,6 +15,7 @@ export default function UsersPage() {
     try {
       const params = { page, limit: 20 }
       if (search) params.search = search
+      if (userType !== 'all') params.role = userType
       const res = await adminAPI.getUsers(params)
       setUsers(res.data.data || [])
       setPagination(res.data.pagination || { page: 1, pages: 1, total: 0 })
@@ -27,7 +29,7 @@ export default function UsersPage() {
   useEffect(() => {
     const timeout = setTimeout(() => fetchUsers(1), 300)
     return () => clearTimeout(timeout)
-  }, [search])
+  }, [search, userType])
 
   const toggleExpand = (userId) => {
     setExpandedUser(expandedUser === userId ? null : userId)
@@ -61,6 +63,27 @@ export default function UsersPage() {
           placeholder="Search by name, email, phone, job..."
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
         />
+      </div>
+
+      {/* User Type Filters */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { label: 'All Users', value: 'all' },
+          { label: 'Individual', value: 'individual' },
+          { label: 'Company', value: 'company' },
+        ].map((type) => (
+          <button
+            key={type.value}
+            onClick={() => setUserType(type.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              userType === type.value
+                ? 'bg-primary text-white'
+                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            {type.label}
+          </button>
+        ))}
       </div>
 
       {/* Table */}

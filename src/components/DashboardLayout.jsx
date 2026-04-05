@@ -4,7 +4,6 @@ import { authAPI } from '../lib/api'
 import {
   FiHome,
   FiUsers,
-  FiBriefcase,
   FiAward,
   FiCreditCard,
   FiPackage,
@@ -20,14 +19,12 @@ import styles from './DashboardLayout.module.css'
 
 const navItems = [
   { to: '/', icon: FiHome, label: 'Overview', end: true },
+  { to: '/plans', icon: FiPackage, label: 'Plans' },
   { to: '/users', icon: FiUsers, label: 'Users' },
-  { to: '/companies', icon: FiBriefcase, label: 'Companies' },
   { to: '/certificates', icon: FiAward, label: 'Certificates' },
   { to: '/certificate-types', icon: FiTag, label: 'Cert. Types' },
   { to: '/courses', icon: FiBookOpen, label: 'Courses' },
-  { to: '/course-categories', icon: FiTag, label: 'Course Categories' },
   { to: '/course-plans', icon: FiPackage, label: 'Course Plans' },
-  { to: '/plans', icon: FiPackage, label: 'Plans' },
   { to: '/subscriptions', icon: FiCreditCard, label: 'Subscriptions' },
   { to: '/contact', icon: FiMail, label: 'Contact' },
   { to: '/about', icon: FiFileText, label: 'About Page' },

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../lib/api'
-import { FiMail, FiUser, FiClock, FiTrash2, FiEye, FiArchive, FiCheckCircle, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { FiMail, FiUser, FiClock, FiTrash2, FiEye, FiCheckCircle, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 
 export default function ContactMessagesPage() {
   const [messages, setMessages] = useState([])
@@ -57,7 +57,6 @@ export default function ContactMessagesPage() {
       case 'new': return 'bg-blue-100 text-blue-700'
       case 'read': return 'bg-yellow-100 text-yellow-700'
       case 'replied': return 'bg-green-100 text-green-700'
-      case 'archived': return 'bg-gray-100 text-gray-600'
       default: return 'bg-gray-100 text-gray-600'
     }
   }
@@ -83,7 +82,7 @@ export default function ContactMessagesPage() {
 
       {/* Filters */}
       <div className="flex gap-2 flex-wrap">
-        {['all', 'new', 'read', 'replied', 'archived'].map((status) => (
+        {['all', 'new', 'read', 'replied'].map((status) => (
           <button
             key={status}
             onClick={() => { setFilter(status); setPage(1) }}
@@ -219,7 +218,6 @@ export default function ContactMessagesPage() {
                       { status: 'new', icon: FiMail, label: 'New' },
                       { status: 'read', icon: FiEye, label: 'Read' },
                       { status: 'replied', icon: FiCheckCircle, label: 'Replied' },
-                      { status: 'archived', icon: FiArchive, label: 'Archived' },
                     ].map(({ status, icon: Icon, label }) => (
                       <button
                         key={status}

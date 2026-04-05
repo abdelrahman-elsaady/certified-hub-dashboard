@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { coursesAPI, courseCategoriesAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiChevronUp, FiChevronDown, FiYoutube, FiEye, FiEyeOff, FiUpload } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 
-const emptyLesson = { title: { en: '', ar: '' }, youtubeUrl: '', duration: 0, isFree: false }
+const emptyLesson = { title: { en: '', ar: '' }, youtubeUrl: '', duration: 0 }
 
 const emptyCourse = {
   title: { en: '', ar: '' },
@@ -14,7 +15,6 @@ const emptyCourse = {
   instructor: { en: '', ar: '' },
   lessons: [],
   isPublished: false,
-  isFree: false,
   order: 0,
 }
 
@@ -29,6 +29,7 @@ export default function CoursesPage() {
   const [tab, setTab] = useState('details') // 'details' | 'lessons'
   const [thumbnailFile, setThumbnailFile] = useState(null)
   const [thumbnailPreview, setThumbnailPreview] = useState(null)
+  const navigate = useNavigate()
 
   const fetchCourses = async () => {
     setLoading(true)
@@ -72,10 +73,8 @@ export default function CoursesPage() {
         title: l.title || { en: '', ar: '' },
         youtubeUrl: l.youtubeUrl || '',
         duration: l.duration || 0,
-        isFree: l.isFree || false,
       })),
       isPublished: course.isPublished || false,
-      isFree: course.isFree || false,
       order: course.order || 0,
     })
     setThumbnailFile(null)
@@ -113,13 +112,13 @@ export default function CoursesPage() {
       fd.append('price', Number(form.price))
       fd.append('currency', form.currency)
       fd.append('order', Number(form.order))
-      fd.append('isFree', form.isFree)
       fd.append('isPublished', form.isPublished)
       fd.append('lessons', JSON.stringify(lessons))
 
       if (thumbnailFile) {
         fd.append('thumbnail', thumbnailFile)
       }
+      // Don't append thumbnail if no file - let backend handle default
 
       if (editing) {
         await coursesAPI.update(editing._id, fd)
@@ -177,13 +176,22 @@ export default function CoursesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Courses</h1>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-        >
-          <FiPlus className="w-4 h-4" />
-          Add Course
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigate('/course-categories')}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            Manage Categories
+          </button>
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            Add Course
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -458,15 +466,6 @@ export default function CoursesPage() {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={form.isFree}
-                        onChange={(e) => setForm({ ...form, isFree: e.target.checked })}
-                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      />
-                      <span className="text-sm text-gray-700">Free Course</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
                         checked={form.isPublished}
                         onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
                         className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -546,26 +545,15 @@ export default function CoursesPage() {
                         />
                       </div>
 
-                      <div className="flex items-center gap-4">
-                        <div className="w-28">
-                          <label className="block text-xs font-medium text-gray-500 mb-1">Duration (min)</label>
-                          <input
-                            type="number"
-                            value={lesson.duration}
-                            onChange={(e) => updateLesson(idx, 'duration', e.target.value)}
-                            className="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                            min="0"
-                          />
-                        </div>
-                        <label className="flex items-center gap-2 cursor-pointer mt-4">
-                          <input
-                            type="checkbox"
-                            checked={lesson.isFree}
-                            onChange={(e) => updateLesson(idx, 'isFree', e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          />
-                          <span className="text-xs text-gray-600">Free Preview</span>
-                        </label>
+                      <div className="w-28">
+                        <label className="block text-xs font-medium text-gray-500 mb-1">Duration (min)</label>
+                        <input
+                          type="number"
+                          value={lesson.duration}
+                          onChange={(e) => updateLesson(idx, 'duration', e.target.value)}
+                          className="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                          min="0"
+                        />
                       </div>
                     </div>
                   ))}
