@@ -14,13 +14,15 @@ import {
   FiBookOpen,
   FiFileText,
   FiMail,
+  FiBriefcase,
 } from 'react-icons/fi'
 import styles from './DashboardLayout.module.css'
 
 const navItems = [
   { to: '/', icon: FiHome, label: 'Overview', end: true },
   { to: '/plans', icon: FiPackage, label: 'Plans' },
-  { to: '/users', icon: FiUsers, label: 'Users' },
+  { to: '/individuals', icon: FiUsers, label: 'Individual Users' },
+  { to: '/companies', icon: FiBriefcase, label: 'Companies' },
   { to: '/certificates', icon: FiAward, label: 'Certificates' },
   { to: '/certificate-types', icon: FiTag, label: 'Cert. Types' },
   { to: '/courses', icon: FiBookOpen, label: 'Courses' },

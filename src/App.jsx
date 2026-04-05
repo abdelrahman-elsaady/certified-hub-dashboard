@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import DashboardLayout from './components/DashboardLayout'
 import LoginPage from './pages/LoginPage'
 import OverviewPage from './pages/OverviewPage'
-import UsersPage from './pages/UsersPage'
+import IndividualsPage from './pages/IndividualsPage'
 import CompaniesPage from './pages/CompaniesPage'
 import CertificatesPage from './pages/CertificatesPage'
 import PlansPage from './pages/PlansPage'
@@ -20,7 +20,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<OverviewPage />} />
-        <Route path="users" element={<UsersPage />} />
+        <Route path="individuals" element={<IndividualsPage />} />
         <Route path="companies" element={<CompaniesPage />} />
         <Route path="certificates" element={<CertificatesPage />} />
         <Route path="plans" element={<PlansPage />} />
