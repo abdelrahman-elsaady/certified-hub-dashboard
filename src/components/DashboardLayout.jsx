@@ -15,6 +15,11 @@ import {
   FiFileText,
   FiMail,
   FiBriefcase,
+  FiGlobe,
+  FiPhone,
+  FiChevronDown,
+  FiChevronUp,
+  FiList,
 } from 'react-icons/fi'
 import styles from './DashboardLayout.module.css'
 
@@ -25,16 +30,35 @@ const navItems = [
   { to: '/companies', icon: FiBriefcase, label: 'Companies' },
   { to: '/certificates', icon: FiAward, label: 'Certificates' },
   { to: '/certificate-types', icon: FiTag, label: 'Cert. Types' },
+  { to: '/certificate-fields', icon: FiTag, label: 'Cert. Fields' },
   { to: '/courses', icon: FiBookOpen, label: 'Courses' },
   { to: '/course-plans', icon: FiPackage, label: 'Course Plans' },
   { to: '/subscriptions', icon: FiCreditCard, label: 'Subscriptions' },
   { to: '/contact', icon: FiMail, label: 'Contact' },
-  { to: '/about', icon: FiFileText, label: 'About Page' },
+  {
+    type: 'dropdown',
+    label: 'Page Content',
+    icon: FiFileText,
+    items: [
+      { to: '/about', icon: FiFileText, label: 'About Page' },
+      { to: '/page-home', icon: FiHome, label: 'Home Page' },
+      { to: '/page-partners', icon: FiGlobe, label: 'Partners Page' },
+      { to: '/page-knowledge-hub', icon: FiBookOpen, label: 'Knowledge Hub' },
+      { to: '/page-for-individuals', icon: FiUsers, label: 'For Individuals' },
+      { to: '/page-for-employers', icon: FiBriefcase, label: 'For Employers' },
+      { to: '/page-contact', icon: FiPhone, label: 'Contact Page' },
+      { to: '/page-legal', icon: FiFileText, label: 'Legal Page' },
+      { to: '/page-certified-staff', icon: FiUsers, label: 'Certified Staff' },
+      { to: '/site-settings', icon: FiGlobe, label: 'Site Settings' },
+      { to: '/list-options', icon: FiList, label: 'List Options' },
+    ],
+  },
 ]
 
 export default function DashboardLayout() {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const [admin, setAdmin] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -99,20 +123,58 @@ export default function DashboardLayout() {
         </div>
 
         <nav className={styles.sidebarNav}>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-              }
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </NavLink>
-          ))}
+          {navItems.map((item, idx) => {
+            if (item.type === 'dropdown') {
+              return (
+                <div key={idx}>
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-5 h-5" />
+                      {item.label}
+                    </div>
+                    {dropdownOpen ? <FiChevronUp className="w-4 h-4" /> : <FiChevronDown className="w-4 h-4" />}
+                  </button>
+                  {dropdownOpen && (
+                    <div className="pl-11 pr-4 py-2 space-y-1">
+                      {item.items.map((subItem) => (
+                        <NavLink
+                          key={subItem.to}
+                          to={subItem.to}
+                          end={subItem.end}
+                          onClick={() => setSidebarOpen(false)}
+                          className={({ isActive }) =>
+                            `block px-3 py-2 text-sm rounded-lg transition-colors ${
+                              isActive ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-50'
+                            }`
+                          }
+                        >
+                          {subItem.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+                }
+              >
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </NavLink>
+            )
+          })}
         </nav>
 
         <div className={styles.sidebarFooter}>

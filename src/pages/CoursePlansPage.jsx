@@ -324,7 +324,7 @@ export default function CoursePlansPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Course Plans</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage course bundle plans for individuals and companies</p>
+          <p className="text-sm text-gray-500 mt-0.5">Manage course bundle plans for companies</p>
         </div>
         <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition-colors">
           <FiPlus className="w-4 h-4" />

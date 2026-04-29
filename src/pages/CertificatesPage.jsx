@@ -84,6 +84,7 @@ export default function CertificatesPage() {
               <tr className="border-b border-gray-200 bg-gray-50">
                 <th className="text-left px-6 py-3 font-medium text-gray-500">User</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Type</th>
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Field</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Expiry</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Photo</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
@@ -93,13 +94,13 @@ export default function CertificatesPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : certificates.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                     No certificates found
                   </td>
                 </tr>
@@ -113,6 +114,7 @@ export default function CertificatesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-600">{cert.certificateType?.name?.en || cert.certificateType?.name || '—'}</td>
+                    <td className="px-6 py-4 text-gray-600">{cert.field?.name?.en || '—'}</td>
                     <td className="px-6 py-4 text-gray-600">
                       {new Date(cert.expiryDate).toLocaleDateString()}
                     </td>

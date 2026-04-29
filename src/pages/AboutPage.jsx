@@ -437,10 +437,10 @@ export default function AboutPage() {
         </SectionWrapper>
 
         {/* 3. Vision */}
-        {/* <SectionWrapper title="3. Vision" open={openSections.vision} onToggle={() => toggleSection('vision')}>
+        <SectionWrapper title="3. Vision" open={openSections.vision} onToggle={() => toggleSection('vision')}>
           <BilingualInput label="Title" value={data.vision?.title} onChange={(v) => updateField('vision', 'title', v)} />
           <BilingualInput label="Description" value={data.vision?.description} onChange={(v) => updateField('vision', 'description', v)} textarea rows={4} />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* 4. Mission */}
         <SectionWrapper title="4. Mission" open={openSections.mission} onToggle={() => toggleSection('mission')}>
@@ -481,7 +481,7 @@ export default function AboutPage() {
             ))}
             <button onClick={() => updateField('problem', 'points', [...(data.problem?.points || []), { en: '', ar: '' }])} className="flex items-center gap-1.5 text-sm text-primary font-medium hover:text-primary-dark"><FiPlus className="w-4 h-4" /> Add Point</button>
           </div>
-          {/* <BilingualInput label="Result Statement" value={data.problem?.result} onChange={(v) => updateField('problem', 'result', v)} textarea rows={2} /> */}
+          <BilingualInput label="Result Statement" value={data.problem?.result} onChange={(v) => updateField('problem', 'result', v)} textarea rows={2} />
         </SectionWrapper>
 
         {/* 7. Our Solution */}
@@ -506,11 +506,22 @@ export default function AboutPage() {
                     <option value="">Select icon</option>
                     <option value="certificate">Certificate</option>
                     <option value="search">Search</option>
-                    <option value="training">Training</option>
-                    <option value="compliance">Compliance</option>
-                    <option value="team">Team</option>
-                    <option value="analytics">Analytics</option>
+                    <option value="training">Training / Book</option>
+                    <option value="compliance">Compliance / Check</option>
+                    <option value="team">Team / Users</option>
+                    <option value="analytics">Analytics / Chart</option>
                     <option value="shield">Shield</option>
+                    <option value="award">Award / Trophy</option>
+                    <option value="clock">Clock / Time</option>
+                    <option value="alert">Alert / Bell</option>
+                    <option value="verified">Verified / Badge</option>
+                    <option value="globe">Globe / World</option>
+                    <option value="database">Database / Registry</option>
+                    <option value="users">Users / Staff</option>
+                    <option value="briefcase">Briefcase / Business</option>
+                    <option value="target">Target / Goal</option>
+                    <option value="zap">Zap / Fast</option>
+                    <option value="lock">Lock / Secure</option>
                   </select>
                 </div>
                 <BilingualInput label="Title" value={feat.title} onChange={(v) => updateArrayItem('solution', 'features', i, 'title', v)} />
@@ -519,10 +530,11 @@ export default function AboutPage() {
             ))}
             <button onClick={() => addArrayItem('solution', 'features', { icon: '', title: { en: '', ar: '' }, description: { en: '', ar: '' } })} className="flex items-center gap-1.5 text-sm text-primary font-medium hover:text-primary-dark"><FiPlus className="w-4 h-4" /> Add Feature</button>
           </div>
+          <BilingualInput label="Result Statement" value={data.solution?.result} onChange={(v) => updateField('solution', 'result', v)} textarea rows={2} />
         </SectionWrapper>
 
         {/* 8. Objectives */}
-        {/* <SectionWrapper title="8. Objectives" open={openSections.objectives} onToggle={() => toggleSection('objectives')}>
+        <SectionWrapper title="8. Objectives" open={openSections.objectives} onToggle={() => toggleSection('objectives')}>
           <BilingualInput label="Section Title" value={data.objectives?.title} onChange={(v) => updateField('objectives', 'title', v)} />
           {(data.objectives?.items || []).map((obj, i) => (
             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
@@ -535,7 +547,7 @@ export default function AboutPage() {
             </div>
           ))}
           <button onClick={() => addArrayItem('objectives', 'items', { title: { en: '', ar: '' }, description: { en: '', ar: '' } })} className="flex items-center gap-1.5 text-sm text-primary font-medium hover:text-primary-dark"><FiPlus className="w-4 h-4" /> Add Objective</button>
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* 9. FAQ */}
         <SectionWrapper title="9. FAQ" open={openSections.faq} onToggle={() => toggleSection('faq')}>

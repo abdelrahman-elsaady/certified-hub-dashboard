@@ -56,6 +56,11 @@ export const adminAPI = {
   createCertificateType: (data) => api.post('/admin/certificate-types', data),
   updateCertificateType: (id, data) => api.put(`/admin/certificate-types/${id}`, data),
   deleteCertificateType: (id) => api.delete(`/admin/certificate-types/${id}`),
+  // Certificate Fields
+  getCertificateFields: () => api.get('/admin/certificate-fields'),
+  createCertificateField: (data) => api.post('/admin/certificate-fields', data),
+  updateCertificateField: (id, data) => api.put(`/admin/certificate-fields/${id}`, data),
+  deleteCertificateField: (id) => api.delete(`/admin/certificate-fields/${id}`),
   // Contact Messages
   getContactMessages: (params) => api.get('/contact', { params }),
   updateContactMessageStatus: (id, data) => api.put(`/contact/${id}/status`, data),
@@ -104,6 +109,33 @@ export const aboutAPI = {
     api.post('/about/upload-image', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+};
+
+// Page Content (all static pages managed via /pages endpoint)
+export const pagesAPI = {
+  getHome: () => api.get('/pages/home'),
+  updateHome: (data) => api.put('/pages/home', data),
+  getPartners: () => api.get('/pages/partners'),
+  updatePartners: (data) => api.put('/pages/partners', data),
+  getKnowledgeHub: () => api.get('/pages/knowledge-hub'),
+  updateKnowledgeHub: (data) => api.put('/pages/knowledge-hub', data),
+  getForIndividuals: () => api.get('/pages/for-individuals'),
+  updateForIndividuals: (data) => api.put('/pages/for-individuals', data),
+  getForEmployers: () => api.get('/pages/for-employers'),
+  updateForEmployers: (data) => api.put('/pages/for-employers', data),
+  getContact: () => api.get('/pages/contact'),
+  updateContact: (data) => api.put('/pages/contact', data),
+  getLegal: () => api.get('/pages/legal'),
+  updateLegal: (data) => api.put('/pages/legal', data),
+  getCertifiedStaff: () => api.get('/pages/certified-staff'),
+  updateCertifiedStaff: (data) => api.put('/pages/certified-staff', data),
+  getSiteSettings: () => api.get('/pages/site-settings'),
+  updateSiteSettings: (data) => api.put('/pages/site-settings', data),
+  getListOptions: (category) => api.get(`/list-options${category ? `?category=${category}` : ''}`),
+  getListOption: (id) => api.get(`/list-options/${id}`),
+  createListOption: (data) => api.post('/list-options', data),
+  updateListOption: (id, data) => api.put(`/list-options/${id}`, data),
+  deleteListOption: (id) => api.delete(`/list-options/${id}`),
 };
 
 export default api;
