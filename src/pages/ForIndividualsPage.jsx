@@ -22,7 +22,6 @@ export default function ForIndividualsPage() {
             <BilingualInput label="Subtitle" value={data?.hero?.subtitle} onChange={(v) => updateField('hero', 'subtitle', v)} />
             <BilingualInput label="Description" value={data?.hero?.heroDesc} onChange={(v) => updateField('hero', 'heroDesc', v)} textarea />
             <BilingualInput label="CTA Register" value={data?.hero?.ctaRegister} onChange={(v) => updateField('hero', 'ctaRegister', v)} />
-            <BilingualInput label="CTA Upload" value={data?.hero?.ctaUpload} onChange={(v) => updateField('hero', 'ctaUpload', v)} />
             <BilingualInput label="CTA Browse Training" value={data?.hero?.ctaBrowseTraining} onChange={(v) => updateField('hero', 'ctaBrowseTraining', v)} />
           </SectionWrapper>
 
@@ -59,12 +58,9 @@ export default function ForIndividualsPage() {
               label="Benefits"
               items={data?.benefits || []}
               onChange={(items) => setData(prev => ({ ...prev, benefits: items }))}
-              template={{ icon: '', text: { en: '', ar: '' } }}
+              template={{ text: { en: '', ar: '' } }}
               renderItem={(item, i, onUpdate) => (
-                <>
-                  <input value={item.icon || ''} onChange={(e) => onUpdate({ ...item, icon: e.target.value })} placeholder="Icon name" className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm" />
-                  <BilingualInput label="Text" value={item.text} onChange={(v) => onUpdate({ ...item, text: v })} />
-                </>
+                <BilingualInput label="Benefit Text" value={item.text} onChange={(v) => onUpdate({ ...item, text: v })} />
               )}
             />
           </SectionWrapper>

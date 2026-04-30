@@ -1,4 +1,4 @@
-import PageEditor, { BilingualInput, SectionWrapper, ArrayEditor } from '../components/PageEditor'
+import PageEditor, { BilingualInput, SectionWrapper, ArrayEditor, IconSelect } from '../components/PageEditor'
 import { pagesAPI } from '../lib/api'
 import { useState } from 'react'
 
@@ -38,12 +38,7 @@ export default function HomePage() {
               template={{ icon: '', title: { en: '', ar: '' }, desc: { en: '', ar: '' } }}
               renderItem={(item, i, onUpdate) => (
                 <>
-                  <input
-                    value={item.icon || ''}
-                    onChange={(e) => onUpdate({ ...item, icon: e.target.value })}
-                    placeholder="Icon name (e.g. shield)"
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  />
+                  <IconSelect value={item.icon} onChange={(v) => onUpdate({ ...item, icon: v })} />
                   <BilingualInput label="Title" value={item.title} onChange={(v) => onUpdate({ ...item, title: v })} />
                   <BilingualInput label="Description" value={item.desc} onChange={(v) => onUpdate({ ...item, desc: v })} textarea />
                 </>

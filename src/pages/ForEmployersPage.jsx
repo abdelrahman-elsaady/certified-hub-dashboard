@@ -34,17 +34,10 @@ export default function ForEmployersPage() {
             <BilingualInput label="Description" value={data?.training?.desc} onChange={(v) => updateField('training', 'desc', v)} textarea />
             <BilingualInput label="Courses For All Levels" value={data?.training?.coursesForAllLevels} onChange={(v) => updateField('training', 'coursesForAllLevels', v)} />
             <BilingualInput label="CTA Browse Training" value={data?.training?.ctaBrowseTraining} onChange={(v) => updateField('training', 'ctaBrowseTraining', v)} />
-            <ArrayEditor
+            <BilingualArrayEditor
               label="Courses"
               items={data?.training?.courses || []}
               onChange={(items) => setData(prev => ({ ...prev, training: { ...prev.training, courses: items } }))}
-              template={{ key: '', icon: '' }}
-              renderItem={(item, i, onUpdate) => (
-                <div className="grid grid-cols-2 gap-3">
-                  <input value={item.key || ''} onChange={(e) => onUpdate({ ...item, key: e.target.value })} placeholder="Course key (e.g. bfst)" className="px-3 py-2 rounded-lg border border-gray-300 text-sm" />
-                  <input value={item.icon || ''} onChange={(e) => onUpdate({ ...item, icon: e.target.value })} placeholder="Icon name" className="px-3 py-2 rounded-lg border border-gray-300 text-sm" />
-                </div>
-              )}
             />
           </SectionWrapper>
 

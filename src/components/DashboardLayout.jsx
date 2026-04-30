@@ -41,7 +41,6 @@ const navItems = [
     icon: FiFileText,
     items: [
       { to: '/about', icon: FiFileText, label: 'About Page' },
-      { to: '/page-home', icon: FiHome, label: 'Home Page' },
       { to: '/page-partners', icon: FiGlobe, label: 'Partners Page' },
       { to: '/page-knowledge-hub', icon: FiBookOpen, label: 'Knowledge Hub' },
       { to: '/page-for-individuals', icon: FiUsers, label: 'For Individuals' },

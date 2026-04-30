@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { aboutAPI } from '../lib/api'
+import { IconSelect } from '../components/PageEditor'
 import { FiSave, FiPlus, FiTrash2, FiChevronDown, FiChevronUp, FiUpload, FiX, FiImage, FiVideo, FiLink } from 'react-icons/fi'
 
 const BilingualInput = ({ label, value, onChange, textarea = false, rows = 3 }) => (
@@ -496,34 +497,7 @@ export default function AboutPage() {
                   <span className="text-xs font-bold text-gray-500">Feature {i + 1}</span>
                   <button onClick={() => removeArrayItem('solution', 'features', i)} className="p-1 text-red-500 hover:bg-red-50 rounded"><FiTrash2 className="w-3.5 h-3.5" /></button>
                 </div>
-                <div>
-                  <label className="block text-[10px] text-gray-400 mb-0.5">Icon Name</label>
-                  <select
-                    value={feat.icon || ''}
-                    onChange={(e) => updateArrayItem('solution', 'features', i, 'icon', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  >
-                    <option value="">Select icon</option>
-                    <option value="certificate">Certificate</option>
-                    <option value="search">Search</option>
-                    <option value="training">Training / Book</option>
-                    <option value="compliance">Compliance / Check</option>
-                    <option value="team">Team / Users</option>
-                    <option value="analytics">Analytics / Chart</option>
-                    <option value="shield">Shield</option>
-                    <option value="award">Award / Trophy</option>
-                    <option value="clock">Clock / Time</option>
-                    <option value="alert">Alert / Bell</option>
-                    <option value="verified">Verified / Badge</option>
-                    <option value="globe">Globe / World</option>
-                    <option value="database">Database / Registry</option>
-                    <option value="users">Users / Staff</option>
-                    <option value="briefcase">Briefcase / Business</option>
-                    <option value="target">Target / Goal</option>
-                    <option value="zap">Zap / Fast</option>
-                    <option value="lock">Lock / Secure</option>
-                  </select>
-                </div>
+                <IconSelect value={feat.icon} onChange={(v) => updateArrayItem('solution', 'features', i, 'icon', v)} />
                 <BilingualInput label="Title" value={feat.title} onChange={(v) => updateArrayItem('solution', 'features', i, 'title', v)} />
                 <BilingualInput label="Description" value={feat.description} onChange={(v) => updateArrayItem('solution', 'features', i, 'description', v)} textarea rows={2} />
               </div>

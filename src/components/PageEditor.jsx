@@ -110,7 +110,79 @@ const BilingualArrayEditor = ({ label, items, onChange }) => (
   />
 )
 
-export { BilingualInput, SectionWrapper, ArrayEditor, BilingualArrayEditor }
+const ICON_OPTIONS = [
+  { value: 'FiBookOpen', label: 'Book / Training' },
+  { value: 'FiAward', label: 'Award / Trophy' },
+  { value: 'FiShield', label: 'Shield / Security' },
+  { value: 'FiCheckCircle', label: 'Check / Verified' },
+  { value: 'FiUsers', label: 'Users / Team' },
+  { value: 'FiUser', label: 'User / Person' },
+  { value: 'FiUserPlus', label: 'User Plus / Recruit' },
+  { value: 'FiBell', label: 'Bell / Alert' },
+  { value: 'FiStar', label: 'Star / Favorite' },
+  { value: 'FiTrendingUp', label: 'Trending Up / Growth' },
+  { value: 'FiAlertCircle', label: 'Alert Circle / Warning' },
+  { value: 'FiFileText', label: 'File / Document' },
+  { value: 'FiMapPin', label: 'Map Pin / Location' },
+  { value: 'FiGlobe', label: 'Globe / World' },
+  { value: 'FiZap', label: 'Zap / Lightning' },
+  { value: 'FiClock', label: 'Clock / Time' },
+  { value: 'FiMonitor', label: 'Monitor / Dashboard' },
+  { value: 'FiBriefcase', label: 'Briefcase / Business' },
+  { value: 'FiHome', label: 'Home / Building' },
+  { value: 'FiSearch', label: 'Search' },
+  { value: 'FiGrid', label: 'Grid / Layout' },
+  { value: 'FiTarget', label: 'Target / Goal' },
+  { value: 'FiLock', label: 'Lock / Secure' },
+  { value: 'FiMail', label: 'Mail / Email' },
+  { value: 'FiPhone', label: 'Phone' },
+  { value: 'FiMessageCircle', label: 'Message / Chat' },
+  { value: 'FiLink', label: 'Link' },
+  { value: 'FiImage', label: 'Image / Photo' },
+  { value: 'FiVideo', label: 'Video' },
+  { value: 'FiUpload', label: 'Upload' },
+  { value: 'FiDownload', label: 'Download' },
+  { value: 'FiHeart', label: 'Heart' },
+  { value: 'FiThumbsUp', label: 'Thumbs Up' },
+  { value: 'FiFlag', label: 'Flag' },
+  { value: 'FiPercent', label: 'Percent / Discount' },
+  { value: 'FiDollarSign', label: 'Dollar / Price' },
+  { value: 'FiCalendar', label: 'Calendar' },
+  { value: 'FiBarChart2', label: 'Bar Chart / Analytics' },
+  { value: 'FiPieChart', label: 'Pie Chart' },
+  { value: 'FiSettings', label: 'Settings / Gear' },
+  { value: 'FiTool', label: 'Tool / Wrench' },
+  { value: 'FiLayers', label: 'Layers / Stack' },
+  { value: 'FiPackage', label: 'Package / Box' },
+  { value: 'FiTruck', label: 'Truck / Delivery' },
+  { value: 'FiHeadphones', label: 'Headphones / Support' },
+  { value: 'FiLifeBuoy', label: 'Life Buoy / Help' },
+  { value: 'FiClipboard', label: 'Clipboard / Checklist' },
+  { value: 'FiEdit3', label: 'Edit / Pencil' },
+  { value: 'FiExternalLink', label: 'External Link' },
+  { value: 'FiArrowRight', label: 'Arrow Right' },
+  { value: 'FiArrowUp', label: 'Arrow Up' },
+  { value: 'FiChevronRight', label: 'Chevron Right' },
+  { value: 'FiCornerRightUp', label: 'Corner Up' },
+]
+
+const IconSelect = ({ value, onChange }) => (
+  <div>
+    <label className="block text-[10px] text-gray-400 mb-0.5">Icon</label>
+    <select
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+    >
+      <option value="">Select icon</option>
+      {ICON_OPTIONS.map(opt => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  </div>
+)
+
+export { BilingualInput, SectionWrapper, ArrayEditor, BilingualArrayEditor, IconSelect, ICON_OPTIONS }
 
 export default function PageEditor({ apiGet, apiUpdate, pageName, children }) {
   const [data, setData] = useState(null)

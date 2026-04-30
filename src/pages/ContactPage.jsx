@@ -2,6 +2,19 @@ import PageEditor, { BilingualInput, SectionWrapper, ArrayEditor } from '../comp
 import { pagesAPI } from '../lib/api'
 import { useState } from 'react'
 
+const CONTACT_ICONS = [
+  { value: 'email', label: 'Email' },
+  { value: 'phone', label: 'Phone' },
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'location', label: 'Location' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'twitter', label: 'Twitter / X' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'facebook', label: 'Facebook' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'website', label: 'Website' },
+]
+
 export default function ContactPage() {
   const [openSections, setOpenSections] = useState({ hero: true })
 
@@ -32,12 +45,26 @@ export default function ContactPage() {
               label="Contact Cards"
               items={data?.cards || []}
               onChange={(items) => setData(prev => ({ ...prev, cards: items }))}
-              template={{ icon: '', label: { en: '', ar: '' }, value: { en: '', ar: '' }, href: '' }}
+              template={{ icon: 'email', label: { en: '', ar: '' }, value: { en: '', ar: '' }, href: '' }}
               renderItem={(item, i, onUpdate) => (
                 <>
                   <div className="grid grid-cols-2 gap-3">
-                    <input value={item.icon || ''} onChange={(e) => onUpdate({ ...item, icon: e.target.value })} placeholder="Icon (mail/phone/chat)" className="px-3 py-2 rounded-lg border border-gray-300 text-sm" />
-                    <input value={item.href || ''} onChange={(e) => onUpdate({ ...item, href: e.target.value })} placeholder="Link (optional)" className="px-3 py-2 rounded-lg border border-gray-300 text-sm" />
+                    <div>
+                      <label className="block text-[10px] text-gray-400 mb-0.5">Icon</label>
+                      <select
+                        value={item.icon || 'email'}
+                        onChange={(e) => onUpdate({ ...item, icon: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      >
+                        {CONTACT_ICONS.map(icon => (
+                          <option key={icon.value} value={icon.value}>{icon.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-400 mb-0.5">Link (optional)</label>
+                      <input value={item.href || ''} onChange={(e) => onUpdate({ ...item, href: e.target.value })} placeholder="https://..." className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm" />
+                    </div>
                   </div>
                   <BilingualInput label="Label" value={item.label} onChange={(v) => onUpdate({ ...item, label: v })} />
                   <BilingualInput label="Value" value={item.value} onChange={(v) => onUpdate({ ...item, value: v })} />
