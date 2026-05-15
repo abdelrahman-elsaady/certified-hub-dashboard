@@ -85,7 +85,7 @@ export default function CertificatesPage() {
                 <th className="text-left px-6 py-3 font-medium text-gray-500">User</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Type</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Field</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Expiry</th>
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Age</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Photo</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Actions</th>
@@ -116,7 +116,7 @@ export default function CertificatesPage() {
                     <td className="px-6 py-4 text-gray-600">{cert.certificateType?.name?.en || cert.certificateType?.name || '—'}</td>
                     <td className="px-6 py-4 text-gray-600">{cert.field?.name?.en || '—'}</td>
                     <td className="px-6 py-4 text-gray-600">
-                      {new Date(cert.expiryDate).toLocaleDateString()}
+                      {cert.user?.age ? `${cert.user.age}` : '—'}
                     </td>
                     <td className="px-6 py-4">
                       {cert.certificatePhoto ? (

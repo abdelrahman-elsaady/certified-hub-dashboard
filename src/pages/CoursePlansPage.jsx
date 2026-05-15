@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react'
 import { coursePlansAPI, coursesAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiPackage, FiBookOpen, FiDollarSign } from 'react-icons/fi'
 
+function getPlanCourseRules(plan) {
+  if (plan.includedCourseRules?.length) {
+    return plan.includedCourseRules.map((rule) => ({
+      course: typeof rule.course === 'string' ? rule.course : rule.course?._id,
+      employeeSeats: rule.employeeSeats ?? 1,
+    })).filter((rule) => rule.course)
+  }
+
+  return (plan.includedCourses || []).map((course) => ({
+    course: typeof course === 'string' ? course : course._id,
+    employeeSeats: 1,
+  })).filter((rule) => rule.course)
+}
+
 export default function CoursePlansPage() {
   const [plans, setPlans] = useState([])
   const [courses, setCourses] = useState([])
@@ -20,6 +34,7 @@ export default function CoursePlansPage() {
       currency: 'AED',
       duration: 30,
       includedCourses: [],
+      includedCourseRules: [],
       features: { en: [''], ar: [''] },
       isActive: true,
       order: 0,
@@ -59,7 +74,8 @@ export default function CoursePlansPage() {
       price: plan.price || '',
       currency: plan.currency || 'AED',
       duration: plan.duration || 30,
-      includedCourses: (plan.includedCourses || []).map((c) => (typeof c === 'string' ? c : c._id)),
+      includedCourseRules: getPlanCourseRules(plan),
+      includedCourses: getPlanCourseRules(plan).map((rule) => rule.course),
       features: {
         en: plan.features?.en?.length ? [...plan.features.en] : [''],
         ar: plan.features?.ar?.length ? [...plan.features.ar] : [''],
@@ -85,6 +101,11 @@ export default function CoursePlansPage() {
         price: Number(form.price),
         duration: Number(form.duration),
         order: Number(form.order),
+        includedCourseRules: form.includedCourseRules.map((rule) => ({
+          course: rule.course,
+          employeeSeats: Math.max(0, Number(rule.employeeSeats || 0)),
+        })),
+        includedCourses: form.includedCourseRules.map((rule) => rule.course),
         features: {
           en: form.features.en.filter(Boolean),
           ar: form.features.ar.filter(Boolean),
@@ -119,11 +140,22 @@ export default function CoursePlansPage() {
 
   const toggleCourse = (courseId) => {
     setForm((prev) => {
-      const current = prev.includedCourses
-      if (current.includes(courseId)) {
-        return { ...prev, includedCourses: current.filter((id) => id !== courseId) }
+      const current = prev.includedCourseRules || []
+      if (current.some((rule) => rule.course === courseId)) {
+        const nextRules = current.filter((rule) => rule.course !== courseId)
+        return { ...prev, includedCourseRules: nextRules, includedCourses: nextRules.map((rule) => rule.course) }
       }
-      return { ...prev, includedCourses: [...current, courseId] }
+      const nextRules = [...current, { course: courseId, employeeSeats: 1 }]
+      return { ...prev, includedCourseRules: nextRules, includedCourses: nextRules.map((rule) => rule.course) }
+    })
+  }
+
+  const updateCourseSeats = (courseId, employeeSeats) => {
+    setForm((prev) => {
+      const nextRules = (prev.includedCourseRules || []).map((rule) =>
+        rule.course === courseId ? { ...rule, employeeSeats } : rule
+      )
+      return { ...prev, includedCourseRules: nextRules, includedCourses: nextRules.map((rule) => rule.course) }
     })
   }
 
@@ -252,24 +284,42 @@ export default function CoursePlansPage() {
           {/* Included Courses */}
           <div>
             <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              Included Courses ({form.includedCourses.length} selected)
+              Included Courses ({form.includedCourseRules.length} selected)
             </label>
             <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-3 space-y-1.5">
               {courses.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-4">No courses available</p>
               ) : (
-                courses.map((c) => (
-                  <label key={c._id} className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${form.includedCourses.includes(c._id) ? 'bg-primary/5 border border-primary/20' : 'hover:bg-gray-50 border border-transparent'}`}>
-                    <input type="checkbox" checked={form.includedCourses.includes(c._id)} onChange={() => toggleCourse(c._id)} className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30" />
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      {c.thumbnail && <img src={c.thumbnail} alt="" className="w-8 h-8 rounded object-cover shrink-0" />}
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{c.title?.en}</p>
-                        <p className="text-[10px] text-gray-400">{c.price === 0 ? 'Free' : `${c.price} ${c.currency}`}</p>
-                      </div>
+                courses.map((c) => {
+                  const selectedRule = form.includedCourseRules.find((rule) => rule.course === c._id)
+
+                  return (
+                    <div key={c._id} className={`px-3 py-2 rounded-lg transition-colors ${selectedRule ? 'bg-primary/5 border border-primary/20' : 'hover:bg-gray-50 border border-transparent'}`}>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" checked={Boolean(selectedRule)} onChange={() => toggleCourse(c._id)} className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30" />
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          {c.thumbnail && <img src={c.thumbnail} alt="" className="w-8 h-8 rounded object-cover shrink-0" />}
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{c.title?.en}</p>
+                            <p className="text-[10px] text-gray-400">{c.price === 0 ? 'Free' : `${c.price} ${c.currency}`}</p>
+                          </div>
+                        </div>
+                      </label>
+                      {selectedRule && (
+                        <div className="mt-2 ms-7 grid grid-cols-[1fr_120px] items-center gap-3">
+                          <p className="text-xs text-gray-500">Employee seats for this course. Company owner always has access.</p>
+                          <input
+                            type="number"
+                            min="0"
+                            value={selectedRule.employeeSeats}
+                            onChange={(e) => updateCourseSeats(c._id, e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-primary/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                          />
+                        </div>
+                      )}
                     </div>
-                  </label>
-                ))
+                  )
+                })
               )}
             </div>
           </div>
@@ -373,11 +423,16 @@ export default function CoursePlansPage() {
                   {/* Show course names */}
                   {plan.includedCourses?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      {plan.includedCourses.map((c) => (
-                        <span key={c._id} className="px-2 py-0.5 bg-gray-100 rounded text-[10px] text-gray-600 font-medium">
-                          {c.title?.en}
+                      {getPlanCourseRules(plan).map((rule) => {
+                        const course = plan.includedCourses?.find((item) => item._id === rule.course)
+                          || plan.includedCourseRules?.find((item) => item.course?._id === rule.course)?.course
+
+                        return (
+                        <span key={rule.course} className="px-2 py-0.5 bg-gray-100 rounded text-[10px] text-gray-600 font-medium">
+                          {course?.title?.en || 'Course'} · {rule.employeeSeats} employee seats
                         </span>
-                      ))}
+                        )
+                      })}
                     </div>
                   )}
                 </div>

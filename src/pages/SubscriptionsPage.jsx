@@ -8,6 +8,7 @@ export default function SubscriptionsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 })
+  const [actionLoading, setActionLoading] = useState('')
 
   const fetchSubscriptions = (page = 1) => {
     setLoading(true)
@@ -48,6 +49,36 @@ export default function SubscriptionsPage() {
     past_due: 'bg-amber-50 text-amber-600',
     expired: 'bg-gray-100 text-gray-500',
     cancelled: 'bg-red-50 text-red-600',
+  }
+
+  const runSubscriptionAction = async (id, action) => {
+    setActionLoading(id)
+    try {
+      await action()
+      fetchSubscriptions(pagination.page)
+    } catch (err) {
+      alert(err.response?.data?.message || 'Subscription action failed')
+    } finally {
+      setActionLoading('')
+    }
+  }
+
+  const updateStatus = (sub) => {
+    const status = prompt('Enter status: active, trialing, past_due, expired, cancelled', sub.status)
+    if (!status) return
+    runSubscriptionAction(sub._id, () => adminAPI.updateSubscriptionStatus(sub._id, { status }))
+  }
+
+  const extendSub = (sub) => {
+    const days = Number(prompt('Extend by how many days?', '30'))
+    if (!Number.isInteger(days) || days < 1) return
+    runSubscriptionAction(sub._id, () => adminAPI.extendSubscription(sub._id, { days }))
+  }
+
+  const changePlan = (sub) => {
+    const planId = prompt('Enter replacement plan ID')
+    if (!planId) return
+    runSubscriptionAction(sub._id, () => adminAPI.changeSubscriptionPlan(sub._id, { planId }))
   }
 
   return (
@@ -113,18 +144,19 @@ export default function SubscriptionsPage() {
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Period</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Usage</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : subscriptions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                     No subscriptions found
                   </td>
                 </tr>
@@ -167,6 +199,38 @@ export default function SubscriptionsPage() {
                       >
                         {sub.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          onClick={() => updateStatus(sub)}
+                          disabled={actionLoading === sub._id}
+                          className="px-2 py-1 rounded border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          Status
+                        </button>
+                        <button
+                          onClick={() => extendSub(sub)}
+                          disabled={actionLoading === sub._id}
+                          className="px-2 py-1 rounded border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          Extend
+                        </button>
+                        <button
+                          onClick={() => changePlan(sub)}
+                          disabled={actionLoading === sub._id}
+                          className="px-2 py-1 rounded border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          Plan
+                        </button>
+                        <button
+                          onClick={() => runSubscriptionAction(sub._id, () => adminAPI.resetSubscriptionUsage(sub._id))}
+                          disabled={actionLoading === sub._id}
+                          className="px-2 py-1 rounded border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          Reset
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

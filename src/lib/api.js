@@ -4,16 +4,27 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Attach Bearer token from localStorage to every request
+function getCookie(name) {
+  const value = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${name}=`));
+  return value ? decodeURIComponent(value.split('=')[1]) : null;
+}
+
+function getCsrfToken() {
+  return sessionStorage.getItem('csrfToken') || getCookie('csrfToken');
+}
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const method = (config.method || 'get').toUpperCase();
+  if (!['GET', 'HEAD'].includes(method)) {
+    config.headers['X-CSRF-Token'] = getCsrfToken() || '';
   }
   // For FormData, remove Content-Type to let browser set it with boundary
   if (config.data instanceof FormData) {
@@ -22,18 +33,28 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use((response) => {
+  if (response.data?.csrfToken) {
+    sessionStorage.setItem('csrfToken', response.data.csrfToken);
+  }
+  return response;
+});
+
 // Auth
 export const authAPI = {
   login: async (data) => {
-    const res = await api.post('/auth/login', { ...data, role: 'individual' });
-    if (res.data?.token) {
-      localStorage.setItem('admin_token', res.data.token);
+    const res = await api.post('/auth/login', { ...data, role: 'admin' });
+    if (res.data?.csrfToken) {
+      sessionStorage.setItem('csrfToken', res.data.csrfToken);
     }
     return res;
   },
-  logout: () => {
-    localStorage.removeItem('admin_token');
-    return api.post('/auth/logout');
+  logout: async () => {
+    try {
+      return await api.post('/auth/logout');
+    } finally {
+      sessionStorage.removeItem('csrfToken');
+    }
   },
   getMe: () => api.get('/auth/me'),
 };
@@ -48,11 +69,15 @@ export const adminAPI = {
   toggleCertificateActive: (id, data) => api.put(`/admin/certificates/${id}/active`, data),
   deleteCertificate: (id) => api.delete(`/admin/certificates/${id}`),
   getSubscriptions: (params) => api.get('/admin/subscriptions', { params }),
+  updateSubscriptionStatus: (id, data) => api.put(`/admin/subscriptions/${id}/status`, data),
+  extendSubscription: (id, data) => api.put(`/admin/subscriptions/${id}/extend`, data),
+  changeSubscriptionPlan: (id, data) => api.put(`/admin/subscriptions/${id}/change-plan`, data),
+  resetSubscriptionUsage: (id) => api.put(`/admin/subscriptions/${id}/reset-usage`),
   createPlan: (data) => api.post('/admin/plans', data),
   updatePlan: (id, data) => api.put(`/admin/plans/${id}`, data),
   deletePlan: (id) => api.delete(`/admin/plans/${id}`),
   // Certificate Types
-  getCertificateTypes: () => api.get('/admin/certificate-types'),
+  getCertificateTypes: (params) => api.get('/admin/certificate-types', { params }),
   createCertificateType: (data) => api.post('/admin/certificate-types', data),
   updateCertificateType: (id, data) => api.put(`/admin/certificate-types/${id}`, data),
   deleteCertificateType: (id) => api.delete(`/admin/certificate-types/${id}`),

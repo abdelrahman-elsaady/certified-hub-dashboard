@@ -109,6 +109,7 @@ export default function CertificateFieldsPage() {
               <tr className="border-b border-gray-200 bg-gray-50">
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Name (EN)</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Name (AR)</th>
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Types</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Order</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Actions</th>
@@ -119,6 +120,7 @@ export default function CertificateFieldsPage() {
                 <tr key={field._id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">{field.name?.en}</td>
                   <td className="px-6 py-4 text-gray-600" dir="rtl">{field.name?.ar}</td>
+                  <td className="px-6 py-4 text-gray-600">{field.typeCount || field.types?.length || 0}</td>
                   <td className="px-6 py-4 text-gray-600">{field.order}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${field.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>

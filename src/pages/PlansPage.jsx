@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI, plansAPI, coursesAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiUsers, FiBriefcase } from 'react-icons/fi'
+import CoursePlansPage from './CoursePlansPage'
 
 const emptyPlan = {
   name: { en: '', ar: '' },
@@ -20,6 +21,8 @@ const emptyPlan = {
   order: 0,
   includedCourses: [],
   allCoursesIncluded: false,
+  marketingBadge: 'none',
+  discountPercent: 0,
 }
 
 export default function PlansPage() {
@@ -30,6 +33,7 @@ export default function PlansPage() {
   const [form, setForm] = useState(emptyPlan)
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState('individual')
+  const [companyPlanType, setCompanyPlanType] = useState('registry')
   const [existingTrial, setExistingTrial] = useState({ individual: null, company: null })
   const [allCourses, setAllCourses] = useState([])
 
@@ -83,6 +87,8 @@ export default function PlansPage() {
       order: plan.order || 0,
       includedCourses: (plan.includedCourses || []).map(c => typeof c === 'object' ? c._id : c),
       allCoursesIncluded: plan.allCoursesIncluded || false,
+      marketingBadge: plan.marketingBadge || 'none',
+      discountPercent: plan.discountPercent || 0,
     })
     setShowModal(true)
   }
@@ -128,6 +134,8 @@ export default function PlansPage() {
         order: Number(form.order),
         includedCourses: form.allCoursesIncluded ? [] : form.includedCourses,
         allCoursesIncluded: form.allCoursesIncluded,
+        marketingBadge: form.marketingBadge || 'none',
+        discountPercent: Number(form.discountPercent || 0),
         features: {
           en: form.features.en.filter((f) => f.trim()),
           ar: form.features.ar.filter((f) => f.trim()),
@@ -182,17 +190,19 @@ export default function PlansPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Subscription Plans</h1>
-        <button
-          onClick={() => {
-            setForm({ ...emptyPlan, targetAudience: activeTab })
-            setEditingPlan(null)
-            setShowModal(true)
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-        >
-          <FiPlus className="w-4 h-4" />
-          Add {activeTab === 'company' ? 'Company' : 'Individual'} Plan
-        </button>
+        {!(activeTab === 'company' && companyPlanType === 'courses') && (
+          <button
+            onClick={() => {
+              setForm({ ...emptyPlan, targetAudience: activeTab })
+              setEditingPlan(null)
+              setShowModal(true)
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            Add {activeTab === 'company' ? 'Company' : 'Individual'} Plan
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -220,6 +230,36 @@ export default function PlansPage() {
           Company Plans
         </button>
       </div>
+
+      {activeTab === 'company' && (
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setCompanyPlanType('registry')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              companyPlanType === 'registry'
+                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Registry Plans
+          </button>
+          <button
+            onClick={() => setCompanyPlanType('courses')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              companyPlanType === 'courses'
+                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Course Plans
+          </button>
+        </div>
+      )}
+
+      {activeTab === 'company' && companyPlanType === 'courses' ? (
+        <CoursePlansPage />
+      ) : (
+        <>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
@@ -262,6 +302,13 @@ export default function PlansPage() {
                   }`}>
                     {plan.isActive ? 'Active' : 'Inactive'}
                   </span>
+                  {plan.marketingBadge && plan.marketingBadge !== 'none' && (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
+                      {plan.marketingBadge === 'best-offer' ? 'Best Offer' :
+                       plan.marketingBadge === 'popular' ? 'Popular' :
+                       `${plan.discountPercent || 0}% Off`}
+                    </span>
+                  )}
                 </div>
               </div>
               <p className="text-2xl font-bold text-gray-900 mb-1">
@@ -307,6 +354,9 @@ export default function PlansPage() {
             </div>
           ))}
         </div>
+      )}
+
+        </>
       )}
 
       {/* Modal */}
@@ -533,6 +583,39 @@ export default function PlansPage() {
                     )}
                   </div>
                 )}
+              </div>
+
+              {/* Features EN */}
+              <div className="p-3 bg-amber-50 rounded-lg space-y-3">
+                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Marketing Label</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Badge Type</label>
+                    <select
+                      value={form.marketingBadge}
+                      onChange={(e) => setForm({ ...form, marketingBadge: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    >
+                      <option value="none">None</option>
+                      <option value="popular">Popular Plan</option>
+                      <option value="best-offer">Best Offer</option>
+                      <option value="discount">Discount</option>
+                    </select>
+                  </div>
+                  {form.marketingBadge === 'discount' && (
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Discount %</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={form.discountPercent}
+                        onChange={(e) => setForm({ ...form, discountPercent: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Features EN */}

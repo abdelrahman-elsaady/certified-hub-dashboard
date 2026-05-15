@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { adminAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi'
 
-const emptyType = { name: { en: '', ar: '' }, isActive: true, order: 0 }
+const emptyType = { field: '', name: { en: '', ar: '' }, isActive: true, order: 0 }
 
 export default function CertificateTypesPage() {
   const [types, setTypes] = useState([])
+  const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -15,8 +16,12 @@ export default function CertificateTypesPage() {
   const fetchTypes = async () => {
     setLoading(true)
     try {
-      const res = await adminAPI.getCertificateTypes()
-      setTypes(res.data.data || [])
+      const [typesRes, fieldsRes] = await Promise.all([
+        adminAPI.getCertificateTypes(),
+        adminAPI.getCertificateFields(),
+      ])
+      setTypes(typesRes.data.data || [])
+      setFields(fieldsRes.data.data || [])
     } catch (err) {
       console.error('Failed to fetch certificate types:', err)
     } finally {
@@ -37,6 +42,7 @@ export default function CertificateTypesPage() {
   const openEdit = (type) => {
     setEditing(type)
     setForm({
+      field: type.field?._id || type.field || '',
       name: type.name || { en: '', ar: '' },
       isActive: type.isActive,
       order: type.order || 0,
@@ -45,6 +51,10 @@ export default function CertificateTypesPage() {
   }
 
   const handleSave = async () => {
+    if (!form.field) {
+      alert('Please select a parent field first')
+      return
+    }
     setSaving(true)
     try {
       const payload = { ...form, order: Number(form.order) }
@@ -75,7 +85,7 @@ export default function CertificateTypesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Certificate Types</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Certificate Types by Field</h1>
         <button
           onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
@@ -104,6 +114,7 @@ export default function CertificateTypesPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="text-left px-6 py-3 font-medium text-gray-500">Field</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Name (EN)</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Name (AR)</th>
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Order</th>
@@ -114,6 +125,7 @@ export default function CertificateTypesPage() {
             <tbody>
               {types.map((type) => (
                 <tr key={type._id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="px-6 py-4 text-gray-600">{type.field?.name?.en || '—'}</td>
                   <td className="px-6 py-4 font-medium text-gray-900">{type.name?.en}</td>
                   <td className="px-6 py-4 text-gray-600" dir="rtl">{type.name?.ar}</td>
                   <td className="px-6 py-4 text-gray-600">{type.order}</td>
@@ -163,6 +175,21 @@ export default function CertificateTypesPage() {
             </div>
 
             <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Field</label>
+                <select
+                  value={form.field}
+                  onChange={(e) => setForm({ ...form, field: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  <option value="">Select field</option>
+                  {fields.map((field) => (
+                    <option key={field._id} value={field._id}>
+                      {field.name?.en}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Name (EN)</label>
                 <input

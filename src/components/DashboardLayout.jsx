@@ -29,7 +29,7 @@ const navItems = [
   { to: '/individuals', icon: FiUsers, label: 'Individual Users' },
   { to: '/companies', icon: FiBriefcase, label: 'Companies' },
   { to: '/certificates', icon: FiAward, label: 'Certificates' },
-  { to: '/certificate-types', icon: FiTag, label: 'Cert. Types' },
+  { to: '/certificate-types', icon: FiTag, label: 'Field Types' },
   { to: '/certificate-fields', icon: FiTag, label: 'Cert. Fields' },
   { to: '/courses', icon: FiBookOpen, label: 'Courses' },
   { to: '/course-plans', icon: FiPackage, label: 'Course Plans' },
