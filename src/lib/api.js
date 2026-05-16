@@ -22,6 +22,7 @@ function getCsrfToken() {
 }
 
 api.interceptors.request.use((config) => {
+  config.headers['X-Auth-Scope'] = 'admin';
   const method = (config.method || 'get').toUpperCase();
   if (!['GET', 'HEAD'].includes(method)) {
     config.headers['X-CSRF-Token'] = getCsrfToken() || '';
