@@ -22,6 +22,7 @@ import {
   FiList,
 } from 'react-icons/fi'
 import styles from './DashboardLayout.module.css'
+import { ToastProvider } from './ToastProvider'
 
 const navItems = [
   { to: '/', icon: FiHome, label: 'Overview', end: true },
@@ -97,7 +98,8 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className={styles.layout}>
+    <ToastProvider>
+      <div className={styles.layout}>
       {/* Sidebar overlay for mobile */}
       {sidebarOpen && (
         <div
@@ -212,6 +214,7 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
-    </div>
+      </div>
+    </ToastProvider>
   )
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { coursePlansAPI, coursesAPI } from '../lib/api'
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiPackage, FiBookOpen, FiDollarSign } from 'react-icons/fi'
+import { useToast } from '../components/ToastProvider'
 
 function getPlanCourseRules(plan) {
   if (plan.includedCourseRules?.length) {
@@ -23,7 +24,7 @@ export default function CoursePlansPage() {
   const [editing, setEditing] = useState(null) // null = list view, 'new' = create, id = edit
   const [form, setForm] = useState(getEmptyForm())
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState(null)
+  const { showToast } = useToast()
 
   function getEmptyForm() {
     return {
@@ -63,7 +64,6 @@ export default function CoursePlansPage() {
   const handleCreate = () => {
     setForm(getEmptyForm())
     setEditing('new')
-    setMessage(null)
   }
 
   const handleEdit = (plan) => {
@@ -84,17 +84,14 @@ export default function CoursePlansPage() {
       order: plan.order || 0,
     })
     setEditing(plan._id)
-    setMessage(null)
   }
 
   const handleCancel = () => {
     setEditing(null)
-    setMessage(null)
   }
 
   const handleSave = async () => {
     setSaving(true)
-    setMessage(null)
     try {
       const payload = {
         ...form,
@@ -113,15 +110,19 @@ export default function CoursePlansPage() {
       }
       if (editing === 'new') {
         await coursePlansAPI.create(payload)
-        setMessage({ type: 'success', text: 'Plan created!' })
+        showToast({ type: 'success', title: 'Plan created', text: 'The course plan was created successfully.' })
       } else {
         await coursePlansAPI.update(editing, payload)
-        setMessage({ type: 'success', text: 'Plan updated!' })
+        showToast({ type: 'success', title: 'Plan updated', text: 'The course plan was updated successfully.' })
       }
       await fetchData()
       setEditing(null)
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Save failed' })
+      showToast({
+        type: 'error',
+        title: "Couldn't save course plan",
+        text: err.response?.data?.message || 'Save failed.',
+      })
     } finally {
       setSaving(false)
     }
@@ -132,9 +133,9 @@ export default function CoursePlansPage() {
     try {
       await coursePlansAPI.delete(id)
       setPlans((prev) => prev.filter((p) => p._id !== id))
-      setMessage({ type: 'success', text: 'Plan deleted' })
+      showToast({ type: 'success', title: 'Plan deleted', text: 'The course plan was deleted.' })
     } catch {
-      setMessage({ type: 'error', text: 'Delete failed' })
+      showToast({ type: 'error', title: 'Delete failed', text: 'The course plan could not be deleted.' })
     }
   }
 
@@ -204,13 +205,6 @@ export default function CoursePlansPage() {
             <FiX className="w-5 h-5" />
           </button>
         </div>
-
-        {message && (
-          <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-            {message.text}
-          </div>
-        )}
-
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
           {/* Name */}
           <div>
@@ -381,13 +375,6 @@ export default function CoursePlansPage() {
           New Plan
         </button>
       </div>
-
-      {message && (
-        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-          {message.text}
-        </div>
-      )}
-
       {plans.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
           <FiPackage className="w-12 h-12 text-gray-300 mx-auto mb-3" />

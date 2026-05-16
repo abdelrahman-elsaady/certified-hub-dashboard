@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FiSave, FiPlus, FiTrash2, FiChevronDown, FiChevronUp } from 'react-icons/fi'
+import { useToast } from './ToastProvider'
 
 const BilingualInput = ({ label, value, onChange, textarea = false, rows = 3 }) => (
   <div className="space-y-2">
@@ -188,7 +189,7 @@ export default function PageEditor({ apiGet, apiUpdate, pageName, children }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState(null)
+  const { showToast } = useToast()
 
   useEffect(() => {
     fetchData()
@@ -207,13 +208,19 @@ export default function PageEditor({ apiGet, apiUpdate, pageName, children }) {
 
   const handleSave = async () => {
     setSaving(true)
-    setMessage(null)
     try {
       await apiUpdate(data)
-      setMessage({ type: 'success', text: `${pageName} saved successfully!` })
-      setTimeout(() => setMessage(null), 3000)
+      showToast({
+        type: 'success',
+        title: `${pageName} updated`,
+        text: `${pageName} saved successfully.`,
+      })
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to save' })
+      showToast({
+        type: 'error',
+        title: `Couldn't save ${pageName}`,
+        text: err.response?.data?.message || 'Failed to save your changes.',
+      })
     } finally {
       setSaving(false)
     }
@@ -261,15 +268,6 @@ export default function PageEditor({ apiGet, apiUpdate, pageName, children }) {
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
-
-      {message && (
-        <div className={`rounded-lg px-4 py-3 text-sm font-medium ${
-          message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
-        }`}>
-          {message.text}
-        </div>
-      )}
-
       {children({ data, setData, updateField, updateDeepField })}
     </div>
   )

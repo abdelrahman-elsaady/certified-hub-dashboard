@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { aboutAPI } from '../lib/api'
 import { IconSelect } from '../components/PageEditor'
 import { FiSave, FiPlus, FiTrash2, FiChevronDown, FiChevronUp, FiUpload, FiX, FiImage, FiVideo, FiLink } from 'react-icons/fi'
+import { useToast } from '../components/ToastProvider'
 
 const BilingualInput = ({ label, value, onChange, textarea = false, rows = 3 }) => (
   <div className="space-y-2">
@@ -66,10 +67,10 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [openSections, setOpenSections] = useState({ hero: true })
-  const [message, setMessage] = useState(null)
   const [heroMediaFile, setHeroMediaFile] = useState(null)
   const [heroMediaPreview, setHeroMediaPreview] = useState(null)
   const [uploadingMedia, setUploadingMedia] = useState(false)
+  const { showToast } = useToast()
   const heroFileRef = useRef(null)
   const [uploadingAboutImage, setUploadingAboutImage] = useState([false, false, false])
   const aboutImageRefs = [useRef(null), useRef(null), useRef(null)]
@@ -96,7 +97,6 @@ export default function AboutPage() {
   const handleAboutImageUpload = async (index, file) => {
     if (!file) return
     setUploadingAboutImage((prev) => { const n = [...prev]; n[index] = true; return n })
-    setMessage(null)
     try {
       const formData = new FormData()
       formData.append('image', file)
@@ -104,10 +104,17 @@ export default function AboutPage() {
       const newImages = [...(data.about?.images || ['', '', ''])]
       newImages[index] = res.data.url
       setData((prev) => ({ ...prev, about: { ...prev.about, images: newImages } }))
-      setMessage({ type: 'success', text: `Image ${index + 1} uploaded!` })
-      setTimeout(() => setMessage(null), 3000)
+      showToast({
+        type: 'success',
+        title: 'Image uploaded',
+        text: `About image ${index + 1} uploaded successfully.`,
+      })
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Upload failed' })
+      showToast({
+        type: 'error',
+        title: 'Image upload failed',
+        text: err.response?.data?.message || 'Upload failed.',
+      })
     } finally {
       setUploadingAboutImage((prev) => { const n = [...prev]; n[index] = false; return n })
       if (aboutImageRefs[index].current) aboutImageRefs[index].current.value = ''
@@ -125,7 +132,6 @@ export default function AboutPage() {
   const handleHeroMediaUpload = async () => {
     if (!heroMediaFile) return
     setUploadingMedia(true)
-    setMessage(null)
     try {
       const formData = new FormData()
       formData.append('media', heroMediaFile)
@@ -148,10 +154,17 @@ export default function AboutPage() {
       setHeroMediaFile(null)
       setHeroMediaPreview(null)
       if (heroFileRef.current) heroFileRef.current.value = ''
-      setMessage({ type: 'success', text: 'Hero media uploaded!' })
-      setTimeout(() => setMessage(null), 3000)
+      showToast({
+        type: 'success',
+        title: 'Hero media uploaded',
+        text: 'The hero media was uploaded successfully.',
+      })
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Upload failed' })
+      showToast({
+        type: 'error',
+        title: 'Hero media upload failed',
+        text: err.response?.data?.message || 'Upload failed.',
+      })
     } finally {
       setUploadingMedia(false)
     }
@@ -159,13 +172,19 @@ export default function AboutPage() {
 
   const handleSave = async () => {
     setSaving(true)
-    setMessage(null)
     try {
       await aboutAPI.update(data)
-      setMessage({ type: 'success', text: 'About page saved successfully!' })
-      setTimeout(() => setMessage(null), 3000)
+      showToast({
+        type: 'success',
+        title: 'About page updated',
+        text: 'About page saved successfully.',
+      })
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to save' })
+      showToast({
+        type: 'error',
+        title: "Couldn't save About page",
+        text: err.response?.data?.message || 'Failed to save.',
+      })
     } finally {
       setSaving(false)
     }
@@ -240,13 +259,6 @@ export default function AboutPage() {
           {saving ? 'Saving...' : 'Save All Changes'}
         </button>
       </div>
-
-      {message && (
-        <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-          {message.text}
-        </div>
-      )}
-
       <div className="space-y-4">
 
         {/* 1. Hero */}

@@ -18,7 +18,7 @@ function getCookie(name) {
 }
 
 function getCsrfToken() {
-  return sessionStorage.getItem('csrfToken') || getCookie('csrfToken');
+  return getCookie('csrfToken') || sessionStorage.getItem('csrfToken');
 }
 
 api.interceptors.request.use((config) => {
@@ -38,6 +38,31 @@ api.interceptors.response.use((response) => {
     sessionStorage.setItem('csrfToken', response.data.csrfToken);
   }
   return response;
+}, async (error) => {
+  const originalRequest = error.config;
+  const isCsrfError =
+    error.response?.status === 403 &&
+    error.response?.data?.code === 'CSRF_INVALID';
+
+  if (!isCsrfError || !originalRequest || originalRequest._retry) {
+    return Promise.reject(error);
+  }
+
+  originalRequest._retry = true;
+
+  try {
+    const refreshResponse = await api.get('/auth/me');
+    if (refreshResponse.data?.csrfToken) {
+      sessionStorage.setItem('csrfToken', refreshResponse.data.csrfToken);
+    }
+
+    originalRequest.headers = originalRequest.headers || {};
+    originalRequest.headers['X-CSRF-Token'] = getCsrfToken() || '';
+
+    return api(originalRequest);
+  } catch (refreshError) {
+    return Promise.reject(refreshError);
+  }
 });
 
 // Auth
