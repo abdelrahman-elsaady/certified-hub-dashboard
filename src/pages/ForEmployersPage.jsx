@@ -1,4 +1,4 @@
-import PageEditor, { BilingualInput, SectionWrapper, ArrayEditor, BilingualArrayEditor } from '../components/PageEditor'
+import PageEditor, { BilingualInput, SectionWrapper, BilingualArrayEditor } from '../components/PageEditor'
 import { pagesAPI } from '../lib/api'
 import { useState } from 'react'
 
@@ -19,10 +19,10 @@ export default function ForEmployersPage() {
             onToggle={() => setOpenSections(p => ({ ...p, hero: !p.hero }))}
           >
             <BilingualInput label="Title" value={data?.hero?.title} onChange={(v) => updateField('hero', 'title', v)} />
-            <BilingualInput label="Subtitle" value={data?.hero?.subtitle} onChange={(v) => updateField('hero', 'subtitle', v)} />
+            <BilingualInput label="Subtitle" value={data?.hero?.subtitle} onChange={(v) => updateField('hero', 'subtitle', v)} textarea />
             <BilingualInput label="Description" value={data?.hero?.heroDesc} onChange={(v) => updateField('hero', 'heroDesc', v)} textarea />
             <BilingualInput label="CTA Subscribe" value={data?.hero?.ctaSubscribe} onChange={(v) => updateField('hero', 'ctaSubscribe', v)} />
-            <BilingualInput label="CTA View Plans" value={data?.hero?.ctaViewPlans} onChange={(v) => updateField('hero', 'ctaViewPlans', v)} />
+            {/* <BilingualInput label="CTA View Plans" value={data?.hero?.ctaViewPlans} onChange={(v) => updateField('hero', 'ctaViewPlans', v)} /> */}
           </SectionWrapper>
 
           <SectionWrapper
@@ -47,12 +47,7 @@ export default function ForEmployersPage() {
             onToggle={() => setOpenSections(p => ({ ...p, packages: !p.packages }))}
           >
             <BilingualInput label="Title" value={data?.packages?.title} onChange={(v) => updateField('packages', 'title', v)} />
-            <BilingualInput label="Subtitle" value={data?.packages?.subtitle} onChange={(v) => updateField('packages', 'subtitle', v)} />
-            <BilingualArrayEditor
-              label="Notes"
-              items={data?.packages?.notes || []}
-              onChange={(items) => setData(prev => ({ ...prev, packages: { ...prev.packages, notes: items } }))}
-            />
+            <BilingualInput label="Subtitle" value={data?.packages?.subtitle} onChange={(v) => updateField('packages', 'subtitle', v)} textarea />
           </SectionWrapper>
 
           <SectionWrapper
@@ -61,8 +56,8 @@ export default function ForEmployersPage() {
             onToggle={() => setOpenSections(p => ({ ...p, registry: !p.registry }))}
           >
             <BilingualInput label="Title" value={data?.registry?.title} onChange={(v) => updateField('registry', 'title', v)} />
-            <BilingualInput label="Subtitle" value={data?.registry?.subtitle} onChange={(v) => updateField('registry', 'subtitle', v)} />
-            <BilingualInput label="Description" value={data?.registry?.desc} onChange={(v) => updateField('registry', 'desc', v)} textarea />
+            <BilingualInput label="Subtitle" value={data?.registry?.subtitle} onChange={(v) => updateField('registry', 'subtitle', v)} textarea />
+            {/* <BilingualInput label="Description" value={data?.registry?.desc} onChange={(v) => updateField('registry', 'desc', v)} textarea /> */}
           </SectionWrapper>
 
           <SectionWrapper
@@ -73,7 +68,7 @@ export default function ForEmployersPage() {
             <BilingualInput label="Title" value={data?.compliance?.title} onChange={(v) => updateField('compliance', 'title', v)} />
             <BilingualInput label="Description" value={data?.compliance?.desc} onChange={(v) => updateField('compliance', 'desc', v)} textarea />
             <BilingualInput label="CTA Subscribe" value={data?.compliance?.ctaSubscribe} onChange={(v) => updateField('compliance', 'ctaSubscribe', v)} />
-            <BilingualInput label="CTA View Plans" value={data?.compliance?.ctaViewPlans} onChange={(v) => updateField('compliance', 'ctaViewPlans', v)} />
+            {/* <BilingualInput label="CTA View Plans" value={data?.compliance?.ctaViewPlans} onChange={(v) => updateField('compliance', 'ctaViewPlans', v)} /> */}
           </SectionWrapper>
         </>
       )}

@@ -49,6 +49,7 @@ const navItems = [
       { to: '/page-contact', icon: FiPhone, label: 'Contact Page' },
       { to: '/page-legal', icon: FiFileText, label: 'Legal Page' },
       { to: '/page-certified-staff', icon: FiUsers, label: 'Certified Staff' },
+      { to: '/page-courses', icon: FiBookOpen, label: 'Courses Page' },
       { to: '/site-settings', icon: FiGlobe, label: 'Site Settings' },
       { to: '/list-options', icon: FiList, label: 'List Options' },
     ],

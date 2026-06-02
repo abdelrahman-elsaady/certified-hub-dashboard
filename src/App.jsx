@@ -24,6 +24,7 @@ const ForEmployersPage = lazy(() => import('./pages/ForEmployersPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const CertifiedStaffPage = lazy(() => import('./pages/CertifiedStaffPage'))
+const CoursesContentPage = lazy(() => import('./pages/CoursesContentPage'))
 const SiteSettingsPage = lazy(() => import('./pages/SiteSettingsPage'))
 const ListOptionsPage = lazy(() => import('./pages/ListOptionsPage'))
 
@@ -65,6 +66,7 @@ function App() {
         <Route path="page-contact" element={<LazyPage><ContactPage /></LazyPage>} />
         <Route path="page-legal" element={<LazyPage><LegalPage /></LazyPage>} />
         <Route path="page-certified-staff" element={<LazyPage><CertifiedStaffPage /></LazyPage>} />
+        <Route path="page-courses" element={<LazyPage><CoursesContentPage /></LazyPage>} />
         <Route path="site-settings" element={<LazyPage><SiteSettingsPage /></LazyPage>} />
         <Route path="list-options" element={<LazyPage><ListOptionsPage /></LazyPage>} />
       </Route>

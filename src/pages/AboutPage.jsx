@@ -4,6 +4,9 @@ import { IconSelect } from '../components/PageEditor'
 import { FiSave, FiPlus, FiTrash2, FiChevronDown, FiChevronUp, FiUpload, FiX, FiImage, FiVideo, FiLink } from 'react-icons/fi'
 import { useToast } from '../components/ToastProvider'
 
+const HERO_MEDIA_MAX_SIZE = 50 * 1024 * 1024
+const HERO_MEDIA_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime']
+
 const BilingualInput = ({ label, value, onChange, textarea = false, rows = 3 }) => (
   <div className="space-y-2">
     {label && <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide">{label}</label>}
@@ -124,6 +127,27 @@ export default function AboutPage() {
   const handleHeroMediaSelect = (e) => {
     const file = e.target.files[0]
     if (!file) return
+
+    if (!HERO_MEDIA_ALLOWED_TYPES.includes(file.type)) {
+      showToast({
+        type: 'error',
+        title: 'Unsupported media type',
+        text: 'Please upload JPG, PNG, WebP, GIF, MP4, WebM, or MOV.',
+      })
+      e.target.value = ''
+      return
+    }
+
+    if (file.size > HERO_MEDIA_MAX_SIZE) {
+      showToast({
+        type: 'error',
+        title: 'Video is too large',
+        text: 'Hero media must be 50MB or smaller. Please compress the video or use a YouTube link.',
+      })
+      e.target.value = ''
+      return
+    }
+
     setHeroMediaFile(file)
     const url = URL.createObjectURL(file)
     setHeroMediaPreview(url)
@@ -160,10 +184,16 @@ export default function AboutPage() {
         text: 'The hero media was uploaded successfully.',
       })
     } catch (err) {
+      const isTimeout = err.code === 'ECONNABORTED'
+      const isNetwork = !err.response
       showToast({
         type: 'error',
         title: 'Hero media upload failed',
-        text: err.response?.data?.message || 'Upload failed.',
+        text: isTimeout
+          ? 'The upload took too long. Please compress the video or use a YouTube link.'
+          : isNetwork
+            ? 'Upload could not reach the API. Check the production API CORS origin and try a smaller video.'
+            : err.response?.data?.message || 'Upload failed.',
       })
     } finally {
       setUploadingMedia(false)

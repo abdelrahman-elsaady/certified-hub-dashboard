@@ -154,12 +154,10 @@ export const aboutAPI = {
   update: (data) => api.put('/about', data),
   uploadHeroMedia: (formData) =>
     api.post('/about/hero-media', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 180000,
     }),
   uploadAboutImage: (formData) =>
-    api.post('/about/upload-image', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    api.post('/about/upload-image', formData),
 };
 
 // Page Content (all static pages managed via /pages endpoint)
@@ -180,6 +178,8 @@ export const pagesAPI = {
   updateLegal: (data) => api.put('/pages/legal', data),
   getCertifiedStaff: () => api.get('/pages/certified-staff'),
   updateCertifiedStaff: (data) => api.put('/pages/certified-staff', data),
+  getCoursesPage: () => api.get('/pages/courses'),
+  updateCoursesPage: (data) => api.put('/pages/courses', data),
   getSiteSettings: () => api.get('/pages/site-settings'),
   updateSiteSettings: (data) => api.put('/pages/site-settings', data),
   getListOptions: (category) => api.get(`/list-options${category ? `?category=${category}` : ''}`),
